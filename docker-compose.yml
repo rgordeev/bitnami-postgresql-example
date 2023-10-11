@@ -1,0 +1,21 @@
+version: "3.4"
+services:
+  postgres:
+    image: bitnami/postgresql:15
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./sql:/docker-entrypoint-initdb.d
+      - ./pg_hba.conf:/bitnami/postgresql/conf/pg_hba.conf
+    environment:
+      - POSTGRESQL_USERNAME=postgres
+      - POSTGRESQL_PASSWORD=postgres
+      - POSTGRESQL_DATABASE=postgres
+    healthcheck:
+      test: ["CMD", "pg_isready", "-q", "-d", "postgres", "-U", "postgres"]
+      interval: 45s
+      timeout: 10s
+      retries: 10
+      start_period: 20s
+    networks:
+      backend: { aliases: [postgres.backend] }
